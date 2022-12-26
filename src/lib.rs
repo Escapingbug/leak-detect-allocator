@@ -1,10 +1,10 @@
 #![feature(new_uninit, allocator_api)]
-use backtrace::{BytesOrWideString, Frame, Symbol};
+use backtrace::{BytesOrWideString, Symbol};
 use hashbrown::hash_map::DefaultHashBuilder;
 use hashbrown::HashMap;
 use heapless::String as HeaplessString;
 use heapless::Vec as HeaplessVec;
-use once_cell::sync::{Lazy, OnceCell};
+use once_cell::sync::Lazy;
 use spin::Mutex;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::fmt::Display;
@@ -62,15 +62,14 @@ pub struct AllocationRecord<const STACK_SIZE: usize> {
 
 impl<const STACK_SIZE: usize> Display for AllocationRecord<STACK_SIZE> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Allocation@{:x} (size {}):\n", self.ptr, self.size)?;
+        write!(f, "Allocation (size {}):\n", self.size)?;
         for s in self.stack.iter() {
             let name = s.name.clone().unwrap_or(HeaplessString::from("[unknown]"));
-            let addr = s.addr;
             let filename = s
                 .filename
                 .clone()
                 .unwrap_or(HeaplessString::from("[unknown file]"));
-            write!(f, "  {name} {addr:x} @ {filename}")?;
+            write!(f, "  {name} @ {filename}")?;
             match (s.line, s.col) {
                 (Some(line), Some(col)) => write!(f, ":{line}-{col})")?,
                 (Some(line), _) => write!(f, ":{line}")?,
@@ -206,6 +205,6 @@ unsafe impl<const STACK_SIZE: usize> GlobalAlloc for LeakTracer<STACK_SIZE> {
 mod tests {
     #[test]
     fn it_works() {
-        let aa = crate::LeakTracer::<15>::new();
+        let _ = crate::LeakTracer::<15>::new();
     }
 }
