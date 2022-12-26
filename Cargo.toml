@@ -12,9 +12,11 @@ build = "build.rs"
 
 [dependencies]
 spin = "0.5.2"
-backtrace = {version = "0.3", default-features = false, features = ["libunwind", "libbacktrace", "dladdr", "dbghelp"]}
+backtrace = { version = "0.3", default-features = false, features = ["libunwind", "libbacktrace", "dladdr", "dbghelp"] }
 once_cell = "1.3"
 heapless = "0.7"
+hashbrown = { version = "0.13", features = ["nightly"] }
+widestring = { version = "1", default-features = false }
 
 [build-dependencies]
 cc = "1.0.68"
