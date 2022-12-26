@@ -107,6 +107,14 @@ impl<const STACK_SIZE: usize> LeakTracer<STACK_SIZE> {
         Self(Lazy::new(|| LeakTracerInner::default()))
     }
 
+    pub fn disable(&self) {
+        self.0.enabled.store(false, Ordering::SeqCst);
+    }
+
+    pub fn enable(&self) {
+        self.0.enabled.store(true, Ordering::SeqCst);
+    }
+
     pub fn get_leaks(
         &self,
     ) -> HashMap<usize, AllocationRecord<STACK_SIZE>, DefaultHashBuilder, System> {
