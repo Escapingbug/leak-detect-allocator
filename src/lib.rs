@@ -118,6 +118,7 @@ impl<const STACK_SIZE: usize> LeakTracer<STACK_SIZE> {
     pub fn get_leaks(
         &self,
     ) -> HashMap<usize, AllocationRecord<STACK_SIZE>, DefaultHashBuilder, System> {
+        let cur = self.0.enabled.load(Ordering::SeqCst);
         self.0.enabled.store(false, Ordering::SeqCst);
 
         let mut out = HashMap::default();
@@ -125,7 +126,7 @@ impl<const STACK_SIZE: usize> LeakTracer<STACK_SIZE> {
             out.insert(*k, v.clone());
         }
 
-        self.0.enabled.store(true, Ordering::SeqCst);
+        self.0.enabled.store(cur, Ordering::SeqCst);
 
         out
     }
